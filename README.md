@@ -63,7 +63,7 @@ examples/               A worked example using fictional sample data
 
 ## Getting started
 
-See [`docs/01-overview.md`](docs/01-overview.md) for the full walkthrough, or jump straight to [`infra/main.bicep`](infra/main.bicep) if you'd rather read the code first.
+See [`docs/01-overview.md`](docs/01-overview.md) for the full walkthrough, [`docs/09-deployment-model.md`](docs/09-deployment-model.md) for where an agent actually runs and how handoff works, or jump straight to [`infra/main.bicep`](infra/main.bicep) if you'd rather read the code first.
 
 ## Status
 

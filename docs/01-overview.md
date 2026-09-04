@@ -13,6 +13,7 @@ Read the stages in order; each one assumes the previous stage's output.
 | 5 | Human-gated merge — the only path to production | [06-human-gated-merge.md](06-human-gated-merge.md) |
 | 6 | Drift detection agent — post-deployment monitoring | [07-drift-detection-agent.md](07-drift-detection-agent.md) |
 | 7 | Security design — identity, secrets, least privilege | [08-security-design.md](08-security-design.md) |
+| 8 | Deployment model — where an agent actually runs, and how handoff works | [09-deployment-model.md](09-deployment-model.md) |
 
 ## A note on what's real and what's a placeholder
 
@@ -22,4 +23,4 @@ Every code sample in this repository is a working pattern — the logic, the con
 
 - An Azure subscription
 - An Azure DevOps (or similar) project-tracking system with webhook/service-hook support
-- Access to an agent orchestration platform that supports tool-calling and agent-to-agent handoff (this pattern was built on Microsoft Foundry with the Model Context Protocol and an Agent-to-Agent handoff pattern, but the architecture doesn't depend on any single vendor)
+- An agent orchestration platform that supports tool-calling and agent-to-agent handoff. This pattern was built on Microsoft Foundry, using the **Model Context Protocol (MCP)** — an open standard for exposing tools to an AI agent — and the **Agent-to-Agent (A2A) protocol** for handoff between agents. The architecture itself doesn't depend on any single vendor; see [09-deployment-model.md](09-deployment-model.md) for how the pieces fit together.
