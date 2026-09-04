@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "baseName": {
+      "value": "a2a-iac-security"
+    },
+    "keyVaultName": {
+      "value": "<your-keyvault-name>"
+    },
+    "automationServiceAccountName": {
+      "value": "<your-automation-account-upn>"
+    },
+    "agentOrchestrationEndpoint": {
+      "value": "https://<your-agent-platform-endpoint>"
+    },
+    "toolsAppDisplayName": {
+      "value": "a2a-iac-security-tools-api"
+    }
+  }
+}
