@@ -7,7 +7,7 @@
 ## Context
 Org: `<your-org>`, Project: `<your-project>`. Repos: `<modules-repo>` (reusable
 modules), `<deploy-repo>` (deployment wrappers).
-- Never hardcode subscription/tenant IDs or resource groups. All changes via PR.
+- Never hardcode cloud account identifiers (subscription/tenant IDs, AWS account IDs, GCP project IDs) or resource groupings. All changes via PR.
 - Reference template: `<modules-repo>/reference-module-template>` — canonical
   patterns for identity, network isolation, structure. Read once during setup,
   follow exactly. Don't improvise structure per-request.

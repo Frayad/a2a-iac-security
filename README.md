@@ -1,6 +1,6 @@
 # A2A IaC Security — Agent-to-Agent Cloud Infrastructure Security Pipeline
 
-> **In plain terms:** Companies run their computer systems on cloud services like Microsoft Azure. A single misconfigured setting in that cloud environment — the kind of small mistake that's easy to make and easy to miss — is one of the most common ways real security breaches happen. This project is a system of coordinated AI agents that automatically checks every proposed change to a company's cloud setup *before* it goes live, and separately keeps checking everything already running *after* it's deployed, flagging problems and suggesting fixes. A human still has to approve every change before anything happens — the agents assist and verify, they don't act unsupervised. The technical documentation below is written for engineers; this paragraph is the plain-language summary of what the rest of this page describes in detail.
+> **In plain terms:** Companies run their computer systems on cloud services like Microsoft Azure, AWS, or Google Cloud. A single misconfigured setting in that cloud environment — the kind of small mistake that's easy to make and easy to miss — is one of the most common ways real security breaches happen. This project is a system of coordinated AI agents that automatically checks every proposed change to a company's cloud setup *before* it goes live, and separately keeps checking everything already running *after* it's deployed, flagging problems and suggesting fixes. A human still has to approve every change before anything happens — the agents assist and verify, they don't act unsupervised. The technical documentation below is written for engineers; this paragraph is the plain-language summary of what the rest of this page describes in detail.
 
 A reference architecture for securing cloud infrastructure across its full lifecycle using coordinated, purpose-built AI agents — validating proposed infrastructure-as-code changes before they reach production, and continuously monitoring deployed resources for configuration drift afterward.
 
@@ -56,14 +56,42 @@ flowchart TD
 
 ```
 docs/                   Step-by-step walkthrough of each stage
-infra/                  Generic Bicep templates implementing the pattern
+infra/                  Reference implementation in Azure Bicep (see note below)
 agents/                 Agent instruction templates (organization-agnostic)
 examples/               A worked example using fictional sample data
 ```
 
 ## Getting started
 
-See [`docs/01-overview.md`](docs/01-overview.md) for the full walkthrough, [`docs/09-deployment-model.md`](docs/09-deployment-model.md) for where an agent actually runs and how handoff works, or jump straight to [`infra/main.bicep`](infra/main.bicep) if you'd rather read the code first.
+See [`docs/01-overview.md`](docs/01-overview.md) for the full walkthrough, [`docs/09-deployment-model.md`](docs/09-deployment-model.md) for where an agent actually runs and how handoff works, or jump straight to [`infra/main.bicep`](infra/main.bicep) if you'd rather read the code first (Azure reference implementation; see [Cloud provider notes](#cloud-provider-notes) for other clouds).
+
+## Cloud provider notes
+
+This system is built and runs in production on **Microsoft Azure**. The pipeline design (trigger, enrichment, authoring, independent audit, human-gated merge, drift detection) and its two protocols, MCP and A2A, are cloud-neutral. What changes on another cloud is the service underneath each component.
+
+Each cell shows the service, with its **parent platform** in parentheses.
+
+| What it does | Azure (built and running) | AWS equivalent | Google Cloud equivalent |
+|---|---|---|---|
+| Tracks the request | Azure Boards (Azure DevOps) | Jira or GitHub Issues | Jira or GitHub Issues |
+| Fires the label-filtered webhook | Service Hooks (Azure DevOps) | Webhook into Amazon API Gateway | Webhook into Cloud Run functions |
+| Hosts branches and pull requests | Azure Repos (Azure DevOps) | GitHub or GitLab | GitHub, GitLab, or Secure Source Manager |
+| Enforces the merge gate | Branch policies + Azure Pipelines (Azure DevOps) | Branch protection + GitHub Actions or AWS CodeBuild | Branch protection + Cloud Build |
+| Runs the trigger service | Azure Logic Apps (Azure Integration Services) | AWS Step Functions + AWS Lambda | Workflows + Cloud Run functions |
+| Stores secrets | Azure Key Vault | AWS Secrets Manager | Secret Manager |
+| Gives each agent and service its own identity | Managed identities (Microsoft Entra ID) | IAM roles (AWS IAM) | Service accounts (Google Cloud IAM) |
+| Restricts who can call each tool server | App registration with required app role (Microsoft Entra ID) | IAM-authorized endpoint with per-role invoke grant | Cloud Run invoker role per service account |
+| Hosts the agents and A2A handoffs | Foundry Agent Service (Microsoft Foundry) | Amazon Bedrock AgentCore (Amazon Bedrock) | Vertex AI Agent Engine (Vertex AI) |
+| Provides the AI models | Foundry Models (Microsoft Foundry) | Foundation models (Amazon Bedrock) | Model Garden (Vertex AI) |
+| Stores MCP server images | Azure Container Registry | Amazon ECR | Artifact Registry |
+| Runs MCP servers | Container hosting, such as Azure Container Apps | Amazon ECS on Fargate, or AgentCore Runtime | Cloud Run |
+| Defines the infrastructure | Bicep (Azure Resource Manager) | AWS CloudFormation, AWS CDK, or Terraform | Terraform or Infrastructure Manager |
+| Supplies posture findings for drift | Microsoft Defender for Cloud | AWS Security Hub | Security Command Center |
+| Records run history and traces | Logic Apps run history + Foundry tracing (Azure Monitor) | Step Functions history + CloudWatch / X-Ray | Workflows logs + Cloud Logging / Cloud Trace |
+
+See [`docs/10-azure-platform-and-cloud-equivalents.md`](docs/10-azure-platform-and-cloud-equivalents.md) for the Azure architecture diagram, a step-by-step walkthrough of one request on Azure, and a layer-by-layer porting guide.
+
+The [`infra/`](infra) folder is the Azure implementation, written in Bicep. Porting the pattern to another cloud means reimplementing [`infra/`](infra) in that cloud's IaC tool and pointing the agents in [`agents/`](agents) at that cloud's identity, secret, and posture services. The pipeline design, the agent boundaries, and the human-gate requirement don't change.
 
 ## Status
 

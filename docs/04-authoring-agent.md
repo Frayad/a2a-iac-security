@@ -15,6 +15,19 @@ This is enforced structurally, not left to the agent's discretion — the toolin
 
 Rather than letting the model decide how a module should be structured each time, the agent is pointed at a single canonical reference implementation and required to follow it exactly — for identity configuration, network isolation, naming conventions, and output structure. This is what makes output from many separate runs consistent with each other, rather than each one being a slightly different interpretation of "good infrastructure code."
 
+## Keep deployment wrappers thin; put shared logic in versioned modules
+
+Infrastructure code in this pattern is split into two layers: **reusable modules** that hold the real logic, and thin **deployment wrappers** that call a pinned module version with environment-specific parameters. The authoring agent is expected to respect that split.
+
+A real example shows why. One request asked for automatic access assignment on a new database: based on which business unit owns the resource and which environment tier it belongs to (production versus non-production), the correct pre-approved security group had to be selected and given either full management or read-only access. The first revisions built that conditional logic inside the wrapper. The final revision moved it into the shared module and changed the wrapper to consume the new module version, so every future resource of that type gets the same logic without duplicating it:
+
+```
+revision 1-2:  add owner/tier detection and group-to-role assignment in the wrapper
+revision 3:    move that logic into the shared module; wrapper consumes the new module version
+```
+
+The diff for the final revision shows the logic being *removed* from the wrapper. That is the intended outcome, not a regression.
+
 ## Modify narrowly, never regenerate wholesale
 
 For a modification request, the agent patches only the specific lines required — it does not regenerate the whole file from scratch, even if that would be simpler. Two mechanical checks help catch accidental damage from this kind of narrow edit:

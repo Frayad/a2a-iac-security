@@ -4,14 +4,14 @@ The agent architecture in this repository doesn't work as intended unless the id
 
 ## No shared or long-lived credentials
 
-Every service and agent runs under its own system-assigned managed identity. Nothing authenticates with a static, shared secret to a first-party Azure service — managed identity handles that. Where a system genuinely can't use managed identity (calling a project-tracking system's own API, for example), that credential is fetched from a secured vault at runtime, never embedded in configuration.
+Every service and agent runs under its own system-assigned managed identity in Microsoft Entra ID (on other clouds, the equivalent is an AWS IAM role or a Google Cloud service account). Nothing authenticates with a static, shared secret to a first-party Azure service — the managed identity handles that. Where a system genuinely can't use managed identity (calling a project-tracking system's own API, for example), that credential is fetched from a secured vault at runtime, never embedded in configuration.
 
 ## Platform-enforced authorization, not just authentication
 
 A common gap: an endpoint validates that a caller has *a* valid identity, but not that the specific identity is *allowed* to call it. Authentication alone lets any identity in the tenant obtain a token; a platform-level requirement that access be explicitly granted per-identity closes that gap:
 
 ```
-# Conceptual pattern (Entra ID / similar identity platforms)
+# Conceptual pattern (Entra ID, AWS IAM policy conditions, GCP IAM bindings, or similar)
 app_role_assignment_required = true
 ```
 
@@ -37,4 +37,4 @@ Every network boundary in this architecture enforces TLS. This is unremarkable a
 
 ---
 
-That's the full pattern. If you're implementing this yourself, [`infra/`](../infra) has generic Bicep templates for the trigger service and identity model, and [`agents/`](../agents) has instruction templates for each of the four agent roles.
+That's the full pattern. If you're implementing this yourself, [`infra/`](../infra) has the Azure reference implementation for the trigger service and identity model (see the [README's cloud provider notes](../README.md#cloud-provider-notes) for AWS/GCP equivalents), and [`agents/`](../agents) has instruction templates for each of the four agent roles.

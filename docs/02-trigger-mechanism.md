@@ -64,6 +64,8 @@ after agent orchestration completes:
         re-verify
 ```
 
+This check exists because of a real failure. In an earlier version, the call that was meant to remove the label was written so that it *added* a tag to the existing list instead of *replacing* the list. The call returned success, the label stayed on the work item, and the same completed request was eligible to run again. Nothing reported an error. When removing a tag, write the complete updated tag list with the label taken out, then read it back to confirm.
+
 This is a small amount of extra code that has an outsized effect on reliability — it converts a class of silent, self-perpetuating failures into a non-issue.
 
 ## Routing by request type
@@ -92,6 +94,6 @@ A hard ceiling here is a deliberate choice: a stuck downstream process should su
 
 ## Reference implementation
 
-See [`infra/modules/trigger-service.bicep`](../infra/modules/trigger-service.bicep) for a generic Logic App implementation of this pattern.
+See [`infra/modules/trigger-service.bicep`](../infra/modules/trigger-service.bicep) for the Azure implementation of this pattern: an Azure Logic App, triggered by an Azure DevOps service hook, reading its secret from Azure Key Vault. On AWS the same logic maps to AWS Step Functions with AWS Lambda; on Google Cloud, to Workflows with Cloud Run functions. See [10-azure-platform-and-cloud-equivalents.md](10-azure-platform-and-cloud-equivalents.md).
 
 Next: [Stage 2 — the enrichment agent](03-enrichment-agent.md)

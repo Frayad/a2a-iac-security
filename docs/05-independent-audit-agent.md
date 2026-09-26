@@ -53,6 +53,20 @@ When a fix cycle happens and the audit is re-invoked, it re-reads every file fro
 
 ## What this actually catches
 
-In a real run of this pattern, a submission's own change notes claimed a network security setting had already been correctly configured. The independent audit didn't accept that claim — it read the branch directly and found the setting was in fact missing, along with two unrelated structural issues in the same change. The change was held until all three were fixed and re-verified. That's the pattern working as intended: not catching an adversarial submission, just catching an honest mistake that a same-agent self-review would very plausibly have missed.
+In a real run of this pattern, a submission's own change notes claimed a network security setting had already been correctly configured. The independent audit didn't accept that claim — it read the branch directly and found the setting was in fact missing, along with two unrelated structural issues in the same change. The change was held until all three were fixed and re-verified. The finding looked like this (illustrative pattern based on the audit's reported findings, not a verbatim excerpt):
+
+```bicep
+// As submitted: the notes said private networking was already configured
+privateEndpointConfigs: [ { enabled: true } ]   // wrong shape, required fields missing
+// no entry for this resource type in the shared private DNS zone map
+
+// Required by the audit
+privateEndpointConfig: { subnetId: <required>, privateDnsZoneId: <required> }
+// matching entry added to the shared private DNS zone map
+```
+
+The complete result of that review recorded several blocking issues and one advisory finding, each with a file-level remediation instruction. The authoring agent applied the instructions and the audit re-read the branch from scratch before the change could move on.
+
+That's the pattern working as intended: not catching an adversarial submission, just catching an honest mistake that a same-agent self-review would very plausibly have missed.
 
 Next: [Stage 5 — human-gated merge](06-human-gated-merge.md)

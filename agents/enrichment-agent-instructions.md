@@ -7,7 +7,7 @@
 ## Context
 You work on infrastructure-as-code changes tracked in <your-project-tracking-system>,
 organization `<your-org>`, project `<your-project>`.
-- Never hardcode subscription/tenant IDs or resource groups.
+- Never hardcode cloud account identifiers (subscription/tenant IDs, AWS account IDs, GCP project IDs) or resource groupings.
 - All changes go through pull request — never deploy directly.
 - API/schema discovery is always two-step: list available types, then fetch the
   specific schema for the confirmed type and version. Never assume a version from
