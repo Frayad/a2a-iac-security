@@ -34,6 +34,14 @@ When the enrichment agent finishes and hands off to the authoring agent, that's 
 
 This matters for reliability in a specific way: because the handoff is a first-class platform feature rather than custom integration code, retries, timeouts, and conversation continuity are handled by infrastructure that's already been built and tested — not something this pattern has to reinvent.
 
+## Every handoff is traceable
+
+Each A2A handoff is a structured message envelope with a unique message identifier. That identifier lets one request be followed from enrichment through authoring and audit across the orchestration platform's own trace, and matched against the trigger service's separate run history.
+
+## Different models for different jobs
+
+Agents do not all run on the same model. Because an agent is a configuration, each role can be assigned the model best suited to its task, and that choice can change without changing the pipeline.
+
 ## Putting it together
 
 For one request moving through the pre-deployment pipeline:

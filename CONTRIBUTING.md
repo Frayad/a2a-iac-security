@@ -4,7 +4,8 @@ This repository documents an architecture pattern I've implemented in
 production, generalized for public reference. Contributions that improve the
 clarity, correctness, or portability of the pattern are welcome:
 
-- **Corrections** to the Bicep templates or documentation
+- **Corrections** to the reference implementation (Bicep) or documentation
+- **Ports** of the reference implementation to other IaC tools (Terraform, CloudFormation, Pulumi) for AWS or GCP
 - **Ports** of the pattern to other clouds or orchestration platforms
 - **Additional worked examples** (using fictional data only — please don't
   include real organizational identifiers in any example or issue)

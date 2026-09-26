@@ -38,8 +38,12 @@ For each code-fixable finding, the agent creates a work item with the same level
 
 That last section — a specific, named property and a concrete suggestion, not just "this needs fixing" — is what turns a generic security alert into something an engineer (or the pipeline in Stages 2–5) can act on directly.
 
+## A dedicated, separately secured tool server
+
+The drift detection agent's tools run on their own MCP server, deployed separately from the pre-deployment tools and protected by the same authorization pattern: a caller must be explicitly granted a role before it can obtain a token for that server. On Azure, that is an Entra ID app registration with a required app role, and findings come from Microsoft Defender for Cloud. On AWS the findings source is AWS Security Hub; on Google Cloud, Security Command Center.
+
 ## Closing the loop
 
-A code-fixable finding's work item can flow into the exact same pre-deployment pipeline described in Stages 1–5 — the same trigger, the same enrichment, authoring, and independent audit. Post-deployment monitoring and pre-deployment validation don't need to be two differently-governed systems; the second one can simply feed the first.
+In this implementation, drift work items are created in a dedicated project, separate from the pre-deployment project, so they do not start the pre-deployment pipeline on their own. A person reviews each finding and decides whether to route it. Once routed, a code-fixable finding's work item can flow into the exact same pre-deployment pipeline described in Stages 1–5 — the same trigger, the same enrichment, authoring, and independent audit. Post-deployment monitoring and pre-deployment validation don't need to be two differently-governed systems; the second one can simply feed the first.
 
 Next: [Security design](08-security-design.md)

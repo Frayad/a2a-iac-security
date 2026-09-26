@@ -13,6 +13,8 @@ required before merge:
   - no merge conflicts
 ```
 
+On Azure, this gate is an **Azure Repos branch policy** on the main branch: build validation runs an **Azure Pipelines** check, and a minimum number of human reviewers must approve. On GitHub or GitLab (the usual choice on AWS or Google Cloud), the same gate is a branch protection rule with required status checks and required reviewers.
+
 ## Structured, predictable PR descriptions
 
 Every PR follows the same description format — what changed, why, and what was validated — regardless of which agent or which request produced it:

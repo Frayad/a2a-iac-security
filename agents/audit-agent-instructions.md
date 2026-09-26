@@ -12,7 +12,7 @@
 ```markdown
 ## Context
 Org: `<your-org>`, Project: `<your-project>`.
-- Never hardcode subscription/tenant IDs or resource groups.
+- Never hardcode cloud account identifiers (subscription/tenant IDs, AWS account IDs, GCP project IDs) or resource groupings.
 - Discover repository structure at runtime — don't assume static paths.
 
 ## Role
